@@ -296,6 +296,102 @@ const createDna = (_layers) => {
   return randNum.join(DNA_DELIMITER);
 };
 
+const isDnaAllowed = (_dna = "") => {
+  const disallowedCombinations = [
+    [
+      [3, "Gold rimmed eyes"],
+      [5, "Golden tooth zombie mouth"],
+    ],
+    [
+      [3, "Chameleon"],
+      [4, "Helmet"],
+    ],
+    [
+      [3, "Chameleon"],
+      [4, "Horn"],
+    ],
+    [
+      [4, "bunches"],
+      [5, "Arrogant with a cigarette"],
+    ],
+    [
+      [3, "Circus clown"],
+      [5, "Showing teeth"],
+    ],
+    [
+      [3, "Electronic display"],
+      [4, "Bandage"],
+    ],
+    [
+      [3, "Electronic display"],
+      [4, "Pirate hat"],
+    ],
+    [
+      [2, "Climbing suit"],
+      [5, "Blue beard"],
+    ],
+    [
+      [3, "3d glasses"],
+      [5, "Golden Tooth"],
+    ],
+    [
+      [3, "Goggles"],
+      [5, "Arrogant with a cigarette"],
+    ],
+    [
+      [1, "Yellow leopard print"],
+      [3, "Vampire"],
+    ],
+    [
+      [3, "Metal glasses"],
+      [5, "Arrogant with a cigarette"],
+    ],
+    [
+      [4, "Clown hairstyle"],
+      [5, "Smoking"],
+    ],
+
+    [
+      [2, "Mechanical assassin"],
+      [5, "Blue beard"],
+    ],
+    [
+      [3, "Mechanical glasses"],
+      [4, "Helmet"],
+    ],
+    [
+      [3, "Circus clown"],
+      [5, "Smoking"],
+    ],
+    [
+      [3, "Sawtooth sunglasses"],
+      [4, "Brown knitted cap"],
+    ],
+    [
+      [3, "Sawtooth sunglasses"],
+      [4, "Black knitted cap"],
+    ],
+  ];
+  const _layers = _dna.split(DNA_DELIMITER);
+  const layers = _layers.map((l) => {
+    return l.split(":")[1].split("#")[0].toLowerCase();
+  });
+
+  for (const c of disallowedCombinations) {
+    const matched = c.every((com) => {
+      const index = com[0];
+      const fileName = com[1];
+      return layers[index] === fileName.toLowerCase();
+    });
+
+    if (matched) {
+      console.log(`Disallowed combination found...Skiping ${c}...`);
+      return false;
+    }
+  }
+  return true;
+};
+
 const writeMetaData = (_data) => {
   fs.writeFileSync(`${buildDir}/json/_metadata.json`, _data);
 };
@@ -353,7 +449,7 @@ const startCreating = async () => {
       editionCount <= layerConfigurations[layerConfigIndex].growEditionSizeTo
     ) {
       let newDna = createDna(layers);
-      if (isDnaUnique(dnaList, newDna)) {
+      if (isDnaUnique(dnaList, newDna) && isDnaAllowed(newDna)) {
         let results = constructLayerToDna(newDna, layers);
         let loadedElements = [];
 
